@@ -39,7 +39,7 @@ npm install bootstrap
 
 ```tsx
 import { Component } from '@angular/core';
-import { MtSelectDropdownComponent } from '../../../mt-select-dropdown/src/lib/mt-select-dropdown.component';
+import { MtSelectDropdownComponent } from 'mt-select-dropdown';
 
 @Component({
   selector: 'app-root',
@@ -276,7 +276,7 @@ We use [SemVer](http://semver.org/) for versioning. For the versions available, 
 
 ## Authors
 
-* **Mohd Taqi Arzoo** - *Initial work* - [JohnDoe](https://github.com/JohnDoe)
+* **Mohd Taqi Arzoo** - *All work* - [Mohd Taqi Arzoo](https://taqiarzoo.weebly.com/)
 
 ## License
 

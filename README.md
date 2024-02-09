@@ -33,7 +33,7 @@ npm install bootstrap
 
 ```tsx
 import { Component } from '@angular/core';
-import { MtSelectDropdownComponent } from '../../../mt-select-dropdown/src/lib/mt-select-dropdown.component';
+import { MtSelectDropdownComponent } from 'mt-select-dropdown';
 
 @Component({
   selector: 'app-root',
@@ -80,7 +80,7 @@ export class AppComponent {
 
 ## Authors
 
-* **Mohd Taqi Arzoo** - *Initial work* - [Mohd Taqi](https://github.com/Taqiarzoo)
+* **Mohd Taqi Arzoo** - *Initial work* - [Mohd Taqi](https://taqiarzoo.weebly.com/)
 
 ## License
 

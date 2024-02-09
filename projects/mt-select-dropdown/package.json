@@ -11,10 +11,23 @@
     "customizable",
     "lazy-loading",
     "search",
-    "accessible"
+    "accessible",
+    "angular standalone"
   ],
-  "author": "Mohd Taqi Arzoo <taqiarzoo434@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Taqiarzoo/mt-select-dropdown.git"
+  },
+  "author": {
+    "name": "Mohd Taqi Arzoo",
+    "email": "taqiarzoo434@gmail.com",
+    "url": "https://taqiarzoo.weebly.com/"
+  },
   "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Taqiarzoo/mt-select-dropdown/issues"
+  },
+  "homepage": "https://taqiarzoo.weebly.com",
   "peerDependencies": {
     "@angular/common": "^17.1.0",
     "@angular/core": "^17.1.0",
