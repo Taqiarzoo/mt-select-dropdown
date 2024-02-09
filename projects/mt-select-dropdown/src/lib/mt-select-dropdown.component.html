@@ -1,0 +1,90 @@
+<div #dropdown class="dropdown" [ngClass]="sCO.dropdown_container">
+    <!-- Custom input div -->
+    <div #dropdownInput class="form-control form-control-sm custom-input"
+        [ngClass]="{'opendropdown': dropdownOpen, 'expanded': isMultiSelect && selectedOption?.length > 0}" tabindex="0"
+        (click)="toggleDropdown()" (keyup.tab)="toggleDropdown()" (keyup.enter)="toggleDropdown()">
+        <!-- Display the selected option(s) in multi-select mode -->
+        <div *ngIf="isMultiSelect && !selectedItemTemplet && selectedOption?.length > 0" class="selected-options"
+            [ngClass]="sCO.selectedContainer">
+            <span class="selected-option"
+                *ngFor="let option of selectedOption.slice(0, batchLimit || selectedOption.length)">
+                {{ option | labelKey: labelKey }}
+                <span class="unselect-item" (click)="unselectOption(option,$event)"
+                    [ngClass]="sCO.unselectItem">&times;</span>
+            </span>
+            <span *ngIf="batchLimit && selectedOption.length > (batchLimit)">
+                +{{ selectedOption.length - (batchLimit) }}
+            </span>
+        </div>
+
+
+        <ng-container *ngIf="isMultiSelect && selectedItemTemplet && selectedOption?.length > 0">
+            <ng-container *ngFor="let option of selectedOption; let i = index">
+                <ng-container [ngTemplateOutlet]="selectedItemTemplet"
+                    [ngTemplateOutletContext]="{ option: option, unSelect: unselectOption }"></ng-container>
+            </ng-container>
+        </ng-container>
+
+        <!-- Display the selected option in single-select mode -->
+        <div *ngIf="!isMultiSelect && !selectedItemTemplet && selectedOption" class="selected-options"
+            [ngClass]="sCO.selectedContainer">
+            <span class="selected-option" [ngClass]="sCO.selectedItem">
+                {{ selectedOption | labelKey: labelKey }}
+                <span class="unselect-item" (click)="unselectOption(selectedOption,$event)"
+                    [ngClass]="sCO.unselectItem">&times;</span>
+            </span>
+        </div>
+
+        <ng-template *ngIf="!isMultiSelect && selectedItemTemplet && selectedOption">
+            <!-- Single-select option custom template -->
+            <ng-container [ngTemplateOutlet]="selectedItemTemplet"
+                [ngTemplateOutletContext]="{ option: selectedOption, unSelect: unselectOption }"></ng-container>
+        </ng-template>
+
+        <span class="placeholder1"
+            *ngIf="(!selectedOption && !isMultiSelect) || (!selectedOption?.length && isMultiSelect)"
+            [ngClass]="sCO.placeholder">{{ placeholder || 'Please select' }}</span>
+
+        <span class="drop-sign" [ngClass]="sCO.dropSymbol">
+            <span class="drop-symbol"></span>
+        </span>
+    </div>
+
+    <!-- The actual dropdown menu -->
+    <ul #dropdownMenu class="dropdown-menu pb-3" [class.show]="dropdownOpen" [class.position-absolute]="!attachToBody"
+        [class.position-fixed]="attachToBody" (scroll)="onScroll($event)" [ngClass]="sCO.dropdownMenu">
+        <!-- Search input as the first element in the dropdown -->
+
+        <li *ngIf="dropdownOpen" class="dropdown-item search-input-item sticky-top header" style="top:0">
+            <div class="input-group mb-3 ">
+                <div class="input-group-text input-group-sm" *ngIf="isMultiSelect">
+                    <input tabindex="-1" type="checkbox" [checked]="isAllSelected()"
+                        (change)="toggleSelectAll($event)" />
+                </div>
+                <input type="text" #searchInput class="form-control form-control-sm search" [ngClass]="sCO.searchInput"
+                    (keyup)="triggerSearch($event)" (keyup.arrowDown)="moveHighlight(1)"
+                    (keyup.arrowUp)="moveHighlight(-1)" (keyup.enter)="handleEnterKey()" (keyup.esc)="closeDropdown()"
+                    placeholder="Search..." />
+                <button class="btn  btn-sm btn-outline-secondary" *ngIf="isMultiSelect && selectedOption.length > 0"
+                    tabindex="-1" type="button" (click)="clearAll()">Clear All</button>
+            </div>
+            <!-- <input type="text" #searchInput class="form-control form-control-sm my-1" 
+        (keyup)="triggerSearch($event)"  (keyup.arrowDown)="moveHighlight(1)" (keyup.arrowUp)="moveHighlight(-1)"
+        (keyup.enter)="handleEnterKey()" (keyup.esc)="closeDropdown()" placeholder="Search..." /> -->
+        </li>
+
+        <li *ngFor="let option of filteredOptions; let opIndex = index" class="dropdown-item items"
+            [class.active]="isOptionSelected(option)" [ngClass]="opIndex == highlightedIndex ? 'heighlited-item' : ''"
+            (click)="selectOption(option, true)" [ngClass]="sCO.dropdownItem">
+            <span *ngIf="!listTemplet">{{ option | labelKey: labelKey }}
+                <span *ngIf="isMultiSelect && isOptionSelected(option)" class="unselect-item"
+                    (click)="unselectOption(option,$event)">&times;</span>
+            </span>
+            <ng-template *ngIf="listTemplet">
+                <!-- Single-select option custom template -->
+                <ng-container [ngTemplateOutlet]="listTemplet" [ngTemplateOutletContext]="{ option: selectedOption }">
+                </ng-container>
+            </ng-template>
+        </li>
+    </ul>
+</div>

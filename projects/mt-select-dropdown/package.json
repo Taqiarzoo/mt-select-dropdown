@@ -1,0 +1,27 @@
+{
+  "name": "mt-select-dropdown",
+  "version": "1.0.0",
+  "description": "A versatile and customizable Angular component for single and multi-select dropdowns.",
+  "keywords": [
+    "angular",
+    "component",
+    "dropdown",
+    "multi-select",
+    "single-select",
+    "customizable",
+    "lazy-loading",
+    "search",
+    "accessible"
+  ],
+  "author": "Mohd Taqi Arzoo <taqiarzoo434@gmail.com>",
+  "license": "MIT",
+  "peerDependencies": {
+    "@angular/common": "^17.1.0",
+    "@angular/core": "^17.1.0",
+    "bootstrap": "^5.0.0"
+  },
+  "dependencies": {
+    "tslib": "^2.3.0"
+  },
+  "sideEffects": false
+}
