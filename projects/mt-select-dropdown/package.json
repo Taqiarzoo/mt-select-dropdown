@@ -1,6 +1,6 @@
 {
   "name": "mt-select-dropdown",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "A versatile and customizable Angular component for single and multi-select dropdowns.",
   "keywords": [
     "angular",

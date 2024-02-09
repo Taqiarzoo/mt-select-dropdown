@@ -29,6 +29,8 @@ $ npm install mt-select-dropdown
 npm install bootstrap 
 ```
 
+
+
 ## Import and Usage:
 
 ```tsx
@@ -56,6 +58,11 @@ export class AppComponent {
 }
 
 ```
+
+## Demo
+
+![Demo](demo.gif)
+
 
 ```html
 <mt-select-dropdown
