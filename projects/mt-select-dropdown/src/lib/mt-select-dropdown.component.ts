@@ -50,6 +50,8 @@ export class MtSelectDropdownComponent implements OnInit, OnDestroy, ControlValu
   @Input() sCO: StyleClassOptions = {}; // Flag to show the loading animation
   @Input() attachToBody: boolean = false;
   @Input() lazyLoading: boolean = false; // New input to enable lazy loading
+  @Input() addNotFound: boolean = false;
+
   @Input() url: boolean = true;
   @Input() loadingOptions: boolean = false; // Flag to show the loading animation
   @Input() apiPath: string = '/default/api/path';
@@ -211,7 +213,11 @@ export class MtSelectDropdownComponent implements OnInit, OnDestroy, ControlValu
     if (!this.lazyLoading) {
       this.filteredOptions = this.options.filter((option) =>
         option.name.toLowerCase().includes(query.toLowerCase())
+
       );
+      if (!this.filteredOptions.length) {
+        this.addNotFoundToList(query)
+      }
     } else {
       if (this.apiPath) {
         this.page = 1
@@ -220,14 +226,30 @@ export class MtSelectDropdownComponent implements OnInit, OnDestroy, ControlValu
         this.onSearch.emit(query);
       }
     }
+
     if (query) {
       this.highlightedIndex = -1; // Reset the highlighted index on search
     }
   }
 
+  addNotFoundToList(searchTearm: string) {
+    if (this.addNotFound == true) {
+      const search = {
+        id: 'nf',
+        [this.labelKey]: searchTearm
+      }
+      if (searchTearm && searchTearm != '') {
+        this.filteredOptions = [search]
+      }
+    }
+  }
+
   triggerSearch(event: any) {
     const query = event.target.value
-    this.searchSubject.next(query)
+    //conduction to check if key is up or down key 
+    if (event.key !== "ArrowUp" && event.key !== "ArrowDown") {
+      this.searchSubject.next(query);
+    }
   }
 
   // Move the highlight based on keyboard arrow keys
@@ -449,7 +471,8 @@ export class MtSelectDropdownComponent implements OnInit, OnDestroy, ControlValu
       selectedIds: this.selectedIds == null || this.selectedIds == undefined ? null : this.selectedIds,
       selectedIdKey: this.selectedIdKey,
       otherParentId: this.otherParentId,
-      otherParentIdValue: this.otherParentIdValue
+      otherParentIdValue: this.otherParentIdValue,
+      q: searchText
     }
     this.http
       .post(this.apiPath, { ...lazyLoadingOptions })
@@ -458,10 +481,15 @@ export class MtSelectDropdownComponent implements OnInit, OnDestroy, ControlValu
           if (list?.status == 1) {
             if (!list?.nextPage) this.isMorepage = false;
             this.page += 1;
-            if (isMarge)
+            if (isMarge) {
               this.options = [...this.options, ...list?.data];
-            else this.options = list?.data;
+              this.filteredOptions = this.options;
+            }
+            else { this.options = list?.data; this.filteredOptions = this.options; }
             this.loadingOptions = false;
+            if (!this.filteredOptions.length && searchText) {
+              this.addNotFoundToList(searchText)
+            }
           }
         },
         error: () => {

@@ -76,15 +76,24 @@
         <li *ngFor="let option of filteredOptions; let opIndex = index" class="dropdown-item items"
             [class.active]="isOptionSelected(option)" [ngClass]="opIndex == highlightedIndex ? 'heighlited-item' : ''"
             (click)="selectOption(option, true)" [ngClass]="sCO.dropdownItem">
-            <span *ngIf="!listTemplet">{{ option | labelKey: labelKey }}
+            <span *ngIf="!listTemplet && option?.id!='nf'">{{ option | labelKey: labelKey }}
                 <span *ngIf="isMultiSelect && isOptionSelected(option)" class="unselect-item"
                     (click)="unselectOption(option,$event)">&times;</span>
             </span>
-            <ng-template *ngIf="listTemplet">
+            @if(option?.id=='nf'){
+            <div class="not_found_item">{{ option | labelKey: labelKey }} <div class="lable-nf">Not Found</div>
+            </div>
+            }
+            <ng-template *ngIf="listTemplet && option?.id!='nf'">
                 <!-- Single-select option custom template -->
                 <ng-container [ngTemplateOutlet]="listTemplet" [ngTemplateOutletContext]="{ option: option }">
                 </ng-container>
             </ng-template>
         </li>
+        @if(addNotFound==false&&!filteredOptions?.length){
+        <li class="dropdown-item items" [ngClass]="sCO.dropdownItem">
+            Item Not Found
+        </li>
+        }
     </ul>
 </div>
