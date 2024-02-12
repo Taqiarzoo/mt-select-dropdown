@@ -1,6 +1,19 @@
 <div class="p-3">
   <h1>Mt Select Dropdown Demo</h1>
-  <mt-select-dropdown class="m-4" [options]="selectedOption" labelKey="name"></mt-select-dropdown>
-  <mt-select-dropdown class="m-4" [options]="selectedOption" [batchLimit]="2" [isMultiSelect]="true"
-    labelKey="name"></mt-select-dropdown>
+  <div class="row">
+    <div class="col-md-12 input-group input-group-sm mb-3 d-flex align-items-center justify-content-center">
+      <mt-select-dropdown [options]="selectedOption" class=""></mt-select-dropdown>
+      <span class="input-group-text" id="inputGroup-sizing-sm">+</span>
+    </div>
+    <div class="col-md-12 ">
+      <div class="input-group input-group-sm mb-3 d-flex align-items-center justify-content-center">
+        <mt-select-dropdown [options]="selectedOption" class="w-100"></mt-select-dropdown>
+        <span class="input-group-text" id="inputGroup-sizing-sm">+</span>
+      </div>
+
+    </div>
+  </div>
 </div>
+
+<!-- ng build --project MtSelectDropdown --configuration production -->
+<!-- ng serve --project MtSelectDropdown-app --configuration production -->

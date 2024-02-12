@@ -4,3 +4,4 @@
 
 export * from './lib/mt-select-dropdown.service';
 export * from './lib/mt-select-dropdown.component';
+export * from './lib/types';

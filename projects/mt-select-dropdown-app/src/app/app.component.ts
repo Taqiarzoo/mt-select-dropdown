@@ -1,6 +1,9 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+//for Development 
 import { MtSelectDropdownComponent } from '../../../mt-select-dropdown/src/lib/mt-select-dropdown.component';
+//after publishing 
+// import { MtSelectDropdownComponent } from 'mt-select-dropdown';
 
 @Component({
   selector: 'app-root',

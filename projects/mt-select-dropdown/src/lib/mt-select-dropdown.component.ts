@@ -1,9 +1,10 @@
-import { Component, ElementRef, EventEmitter, HostListener, Input, OnDestroy, OnInit, Output, Renderer2, TemplateRef, ViewChild, forwardRef } from '@angular/core';
+import { Component, ElementRef, EventEmitter, HostListener, Input, OnDestroy, OnInit, Output, Renderer2, TemplateRef, ViewChild, forwardRef, inject } from '@angular/core';
 import { Subject, debounceTime } from 'rxjs';
 import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { SharedModule } from './shared.module';
-import { StyleClassOptions } from './pipes/pipes/types';
+import { StyleClassOptions } from './types';
+import { HttpClient } from '@angular/common/http';
 
 const defultStyle: StyleClassOptions = {
   dropdown_container: '',
@@ -45,26 +46,40 @@ export class MtSelectDropdownComponent implements OnInit, OnDestroy, ControlValu
   @Input() listTemplet!: TemplateRef<any>;
   @Input() willAutoClose: boolean = true;
   @Input() isMultiSelect: boolean = false; // New input to specify multi-select
-  @Input() lazyLoading: boolean = false; // New input to enable lazy loading
-  @Input() loadingOptions: boolean = false; // Flag to show the loading animation
   @Input() placeholder: string = "Please Select"; // Flag to show the loading animation
   @Input() sCO: StyleClassOptions = {}; // Flag to show the loading animation
+  @Input() attachToBody: boolean = false;
+  @Input() lazyLoading: boolean = false; // New input to enable lazy loading
+  @Input() url: boolean = true;
+  @Input() loadingOptions: boolean = false; // Flag to show the loading animation
+  @Input() apiPath: string = '/default/api/path';
+  @Input() limit: number = 10;
+  @Input() page: number = 1;
+  @Input() order_by: string = 'name';
+  @Input() order_direction: string = 'asc';
+  @Input() searchText: string = '';
+  @Input() parentIdValue: any = null;
+  @Input() parentId: any = null;
+  @Input() selectedIds: any = null;
+  @Input() selectedIdKey: string = 'id';
+  @Input() otherParentId: any = null;
+  @Input() otherParentIdValue: any = null;
 
   @Output() onSelect = new EventEmitter<any | any[]>(); // Emit the selected value(s)
   @Output() onOpen = new EventEmitter<void>(); // Emit when the dropdown is opened
   @Output() onClose = new EventEmitter<void>(); // Emit when the dropdown is closed
   @Output() onSearch = new EventEmitter<string>(); // Emit the search query
   @Output() loadNext = new EventEmitter<void>(); // Emit to load the next batch of options
-
+  http!: HttpClient;
   private searchSubject = new Subject<string>();
 
   dropdownOpen: boolean = false;
-  public attachToBody: boolean = false;
   selectedOption: any | any[] = this.isMultiSelect ? [] : null;
   filteredOptions: any[] = [];
   highlightedIndex: number = 0; // Index of the highlighted option
   private blurTimeout: any; // Variable to store the timeout reference
   cancel_Blur_auto_close: boolean = false;
+  isMorepage: boolean = true;
 
   constructor(private elementRef: ElementRef, private renderer: Renderer2) {
     // The elementRef will now be available for use within this component.
@@ -79,6 +94,10 @@ export class MtSelectDropdownComponent implements OnInit, OnDestroy, ControlValu
     this.searchSubject.pipe(debounceTime(300)).subscribe((query) => {
       this.handleSearch(query)
     })
+
+    if (this.lazyLoading) {
+      this.http = inject(HttpClient)
+    }
   }
   initOptions() {
     this.sCO = {
@@ -102,7 +121,6 @@ export class MtSelectDropdownComponent implements OnInit, OnDestroy, ControlValu
     } else {
       this.selectedOption = value;
     }
-    console.log({ selectedOption: this.selectedOption }, this.isMultiSelect)
     this.emitSelectedValue();
   }
 
@@ -128,8 +146,12 @@ export class MtSelectDropdownComponent implements OnInit, OnDestroy, ControlValu
     if (this.lazyLoading && !this.loadingOptions) {
       if (event.srcElement.scrollTop + event.srcElement.offsetHeight >=
         event.srcElement.scrollHeight) {
-        this.loadNext.emit();
         this.loadingOptions = true;
+        if (this.apiPath) {
+          this.callApi(true)
+        } else {
+          this.loadNext.emit();
+        }
       }
     }
   }
@@ -137,8 +159,6 @@ export class MtSelectDropdownComponent implements OnInit, OnDestroy, ControlValu
   // Toggle the dropdown visibility
   toggleDropdown(): void {
     this.highlightedIndex = -1;
-
-    console.log("toggel", this.highlightedIndex,)
     this.dropdownOpen = !this.dropdownOpen;
     this.filteredOptions = this.options;
     this.getActiveIndex();
@@ -149,18 +169,22 @@ export class MtSelectDropdownComponent implements OnInit, OnDestroy, ControlValu
     }
 
     setTimeout(() => {
-      this.highlightedIndex = 0;
+      this.highlightedIndex = -1;
       if (this.dropdownOpen && this.searchInput) {
         this.searchInput.nativeElement.focus();
         this.onOpenEvents()
         this.adjustDropdownPosition()
-        console.log("toggel after", this.highlightedIndex,)
       }
     }, 400)
     this.setDropdownWidth()
     if (this.dropdownOpen && this.lazyLoading) {
       // Emit loadNext event to notify parent component to load more options
-      this.loadNext.emit();
+      if (this.apiPath) {
+        this.page = 1
+        this.callApi()
+      } else {
+        this.loadNext.emit();
+      }
     }
 
   }
@@ -184,11 +208,20 @@ export class MtSelectDropdownComponent implements OnInit, OnDestroy, ControlValu
 
   // Search options based on user input
   handleSearch(query: string): void {
-    this.filteredOptions = this.options.filter((option) =>
-      option.name.toLowerCase().includes(query.toLowerCase())
-    );
+    if (!this.lazyLoading) {
+      this.filteredOptions = this.options.filter((option) =>
+        option.name.toLowerCase().includes(query.toLowerCase())
+      );
+    } else {
+      if (this.apiPath) {
+        this.page = 1
+        this.callApi(false, query)
+      } else {
+        this.onSearch.emit(query);
+      }
+    }
     if (query) {
-      this.highlightedIndex = 0; // Reset the highlighted index on search
+      this.highlightedIndex = -1; // Reset the highlighted index on search
     }
   }
 
@@ -281,17 +314,6 @@ export class MtSelectDropdownComponent implements OnInit, OnDestroy, ControlValu
   }
 
 
-  // Check if an option is selected in single or multi-select mode
-  // isOptionSelected(option: any): boolean {
-  //   console.log({ options: this.selectedOption, option, result: (this.selectedOption as any[]).includes(option) })
-  //   if ((Array.isArray(this.selectedOption) && !this.selectedOption.length) || !this.selectedOption)
-  //     return false
-  //   if (this.isMultiSelect) {
-  //     return (this.selectedOption as any[]).includes(option);
-  //   } else {
-  //     return this.selectedOption === option;
-  //   }
-  // }
 
   // Check if an option is selected in single or multi-select mode
   isOptionSelected(option: any): boolean {
@@ -383,7 +405,6 @@ export class MtSelectDropdownComponent implements OnInit, OnDestroy, ControlValu
 
       if (spaceBelow < dropdownMenuHeight && spaceAbove >= dropdownMenuHeight) {
         // Not enough space below, but enough space above, position the dropdown above the custom input
-        console.log("Place Baove", 'top', `-${dropdownMenuHeight}px`)
         this.renderer.setStyle(dropdownMenu, 'top', `-${dropdownMenuHeight}px`);
       }
     }
@@ -402,41 +423,51 @@ export class MtSelectDropdownComponent implements OnInit, OnDestroy, ControlValu
       // Check if the related target is not within the dropdown, and if so, close the dropdown
       const dropdownMenu = this.dropdownMenu.nativeElement;
       const relatedTarget = event.relatedTarget || document.activeElement;
-      console.log({ relatedTarget })
-      console.log({ event })
       if (!dropdownMenu.contains(relatedTarget as Node)) {
         this.blurTimeout = setTimeout(() => {
           if (this.cancel_Blur_auto_close == false) {
             this.closeDropdown();
-            console.log("blur")
           }
         }, 200);
       }
     });
 
-    //   // Attach a mousedown event listener to the dropdown menu
-    // this.dropdownMenu.nativeElement.addEventListener('mousedown', (event: MouseEvent) => {
-    //   // When the dropdown menu is clicked, clear the blurTimeout to prevent the dropdown from closing
-    //   clearTimeout(this.blurTimeout);
-    // });
 
-    // // Attach a focus event listener to the search input
-    // this.searchInput.nativeElement.addEventListener('focus', () => {
-    //   // When the search input is focused, clear the blurTimeout to prevent the dropdown from closing
-    //   clearTimeout(this.blurTimeout);
-    // });
 
-    // // Attach a blur event listener to the search input
-    // this.searchInput.nativeElement.addEventListener('blur', (event: FocusEvent) => {
-    //   // Check if the related target is not within the dropdown, and if so, close the dropdown
-    //   if (!this.elementRef.nativeElement.contains(event.relatedTarget as Node)) {
-    //     this.blurTimeout = setTimeout(() => {
-    //       this.closeDropdown();
-    //       console.log("blur")
-    //     }, 200);
-    //   }
-    // });
+  }
 
+  callApi(isMarge: boolean = false, searchText: string = '') {
+    this.loadingOptions = true;
+    const lazyLoadingOptions = {
+      limit: this.limit,
+      page: this.page,
+      order_by: this.order_by,
+      order_direction: this.order_direction,
+      searchText: this.searchText,
+      parentIdValue: this.parentIdValue,
+      parentId: this.parentId,
+      selectedIds: this.selectedIds == null || this.selectedIds == undefined ? null : this.selectedIds,
+      selectedIdKey: this.selectedIdKey,
+      otherParentId: this.otherParentId,
+      otherParentIdValue: this.otherParentIdValue
+    }
+    this.http
+      .post(this.apiPath, { ...lazyLoadingOptions })
+      .subscribe({
+        next: (list: any) => {
+          if (list?.status == 1) {
+            if (!list?.nextPage) this.isMorepage = false;
+            this.page += 1;
+            if (isMarge)
+              this.options = [...this.options, ...list?.data];
+            else this.options = list?.data;
+            this.loadingOptions = false;
+          }
+        },
+        error: () => {
+          this.loadingOptions = false;
+        },
+      });
   }
 }
 

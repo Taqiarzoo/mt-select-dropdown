@@ -1,6 +1,6 @@
 <div #dropdown class="dropdown" [ngClass]="sCO.dropdown_container">
     <!-- Custom input div -->
-    <div #dropdownInput class="form-control form-control-sm custom-input"
+    <div #dropdownInput class="form-control form-control-sm custom-input d-flex align-items-center "
         [ngClass]="{'opendropdown': dropdownOpen, 'expanded': isMultiSelect && selectedOption?.length > 0}" tabindex="0"
         (click)="toggleDropdown()" (keyup.tab)="toggleDropdown()" (keyup.enter)="toggleDropdown()">
         <!-- Display the selected option(s) in multi-select mode -->
@@ -82,7 +82,7 @@
             </span>
             <ng-template *ngIf="listTemplet">
                 <!-- Single-select option custom template -->
-                <ng-container [ngTemplateOutlet]="listTemplet" [ngTemplateOutletContext]="{ option: selectedOption }">
+                <ng-container [ngTemplateOutlet]="listTemplet" [ngTemplateOutletContext]="{ option: option }">
                 </ng-container>
             </ng-template>
         </li>
