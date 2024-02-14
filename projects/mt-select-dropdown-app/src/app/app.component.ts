@@ -1,7 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 //for Development 
 import { MtSelectDropdownComponent } from '../../../mt-select-dropdown/src/lib/mt-select-dropdown.component';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { MtSelectDropdownService } from '../../../mt-select-dropdown/src/lib/mt-select-dropdown.service';
+import { HttpService } from './http.service';
 //after publishing 
 // import { MtSelectDropdownComponent } from 'mt-select-dropdown';
 
@@ -14,7 +17,7 @@ import { MtSelectDropdownComponent } from '../../../mt-select-dropdown/src/lib/m
 })
 export class AppComponent {
   title = 'MtSelectDropdown-app';
-
+  http = inject(HttpService)
   selectedOption = [
     { id: 1, name: 'India' },
     { id: 2, name: 'USA' },

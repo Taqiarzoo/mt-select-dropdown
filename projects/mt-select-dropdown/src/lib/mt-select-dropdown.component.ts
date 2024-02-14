@@ -4,7 +4,7 @@ import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR, ReactiveFormsModu
 import { CommonModule } from '@angular/common';
 import { SharedModule } from './shared.module';
 import { StyleClassOptions } from './types';
-import { HttpClient } from '@angular/common/http';
+import { MtSelectDropdownService } from './mt-select-dropdown.service';
 
 const defultStyle: StyleClassOptions = {
   dropdown_container: '',
@@ -72,7 +72,6 @@ export class MtSelectDropdownComponent implements OnInit, OnDestroy, ControlValu
   @Output() onClose = new EventEmitter<void>(); // Emit when the dropdown is closed
   @Output() onSearch = new EventEmitter<string>(); // Emit the search query
   @Output() loadNext = new EventEmitter<void>(); // Emit to load the next batch of options
-  http!: HttpClient;
   private searchSubject = new Subject<string>();
 
   dropdownOpen: boolean = false;
@@ -82,8 +81,9 @@ export class MtSelectDropdownComponent implements OnInit, OnDestroy, ControlValu
   private blurTimeout: any; // Variable to store the timeout reference
   cancel_Blur_auto_close: boolean = false;
   isMorepage: boolean = true;
+  myService = inject(MtSelectDropdownService);
 
-  constructor(private elementRef: ElementRef, private renderer: Renderer2) {
+  constructor(private elementRef: ElementRef, private renderer: Renderer2, private elRef: ElementRef) {
     // The elementRef will now be available for use within this component.
   }
 
@@ -97,9 +97,7 @@ export class MtSelectDropdownComponent implements OnInit, OnDestroy, ControlValu
       this.handleSearch(query)
     })
 
-    if (this.lazyLoading) {
-      this.http = inject(HttpClient)
-    }
+
   }
   initOptions() {
     this.sCO = {
@@ -145,18 +143,33 @@ export class MtSelectDropdownComponent implements OnInit, OnDestroy, ControlValu
 
 
   onScroll(event: any): void {
-    if (this.lazyLoading && !this.loadingOptions) {
-      if (event.srcElement.scrollTop + event.srcElement.offsetHeight >=
-        event.srcElement.scrollHeight) {
+    // const dropdownMenu = this.dropdownMenu.nativeElement;
+    const dropdownMenu = this.elRef.nativeElement.querySelector('#dropdown-menu'); // adjust selector as needed
+    console.log('this.isMorepage', this.isMorepage)
+    if (this.lazyLoading && !this.loadingOptions && this.isMorepage) {
+      // Store the current scroll position
+      const scrollTopBeforeLoad = dropdownMenu.scrollTop;
+
+      if (event.srcElement.scrollTop + event.srcElement.offsetHeight >= event.srcElement.scrollHeight) {
         this.loadingOptions = true;
         if (this.apiPath) {
           this.callApi(true)
+          // .then(() => {
+          //   // Restore the scroll position after loading more items
+          //   setTimeout(() => {
+          //     dropdownMenu.scrollTop = scrollTopBeforeLoad;
+          //     this.renderer.setProperty(dropdownMenu, 'scrollTop', scrollTopBeforeLoad);
+          //   }, 100);
+          // });
         } else {
           this.loadNext.emit();
+          // Restore the scroll position after loading more items
+          this.renderer.setProperty(dropdownMenu, 'scrollTop', scrollTopBeforeLoad);
         }
       }
     }
   }
+
 
   // Toggle the dropdown visibility
   toggleDropdown(): void {
@@ -170,25 +183,27 @@ export class MtSelectDropdownComponent implements OnInit, OnDestroy, ControlValu
       this.onClose.emit(); // Emit onClose event when the dropdown is closed
     }
 
+    if (this.lazyLoading) {
+      this.loadingOptions = true
+      this.isMorepage = true
+    }
     setTimeout(() => {
       this.highlightedIndex = -1;
       if (this.dropdownOpen && this.searchInput) {
         this.searchInput.nativeElement.focus();
         this.onOpenEvents()
         this.adjustDropdownPosition()
+        if (this.lazyLoading) {
+          if (this.apiPath) {
+            this.page = 1
+            this.callApi()
+          } else {
+            this.loadNext.emit();
+          }
+        }
       }
     }, 400)
     this.setDropdownWidth()
-    if (this.dropdownOpen && this.lazyLoading) {
-      // Emit loadNext event to notify parent component to load more options
-      if (this.apiPath) {
-        this.page = 1
-        this.callApi()
-      } else {
-        this.loadNext.emit();
-      }
-    }
-
   }
 
   getActiveIndex() {
@@ -459,43 +474,54 @@ export class MtSelectDropdownComponent implements OnInit, OnDestroy, ControlValu
   }
 
   callApi(isMarge: boolean = false, searchText: string = '') {
-    this.loadingOptions = true;
-    const lazyLoadingOptions = {
-      limit: this.limit,
-      page: this.page,
-      order_by: this.order_by,
-      order_direction: this.order_direction,
-      searchText: this.searchText,
-      parentIdValue: this.parentIdValue,
-      parentId: this.parentId,
-      selectedIds: this.selectedIds == null || this.selectedIds == undefined ? null : this.selectedIds,
-      selectedIdKey: this.selectedIdKey,
-      otherParentId: this.otherParentId,
-      otherParentIdValue: this.otherParentIdValue,
-      q: searchText
-    }
-    this.http
-      .post(this.apiPath, { ...lazyLoadingOptions })
-      .subscribe({
-        next: (list: any) => {
-          if (list?.status == 1) {
-            if (!list?.nextPage) this.isMorepage = false;
-            this.page += 1;
-            if (isMarge) {
-              this.options = [...this.options, ...list?.data];
-              this.filteredOptions = this.options;
-            }
-            else { this.options = list?.data; this.filteredOptions = this.options; }
-            this.loadingOptions = false;
-            if (!this.filteredOptions.length && searchText) {
-              this.addNotFoundToList(searchText)
-            }
-          }
-        },
-        error: () => {
-          this.loadingOptions = false;
-        },
-      });
+    return new Promise((resolve, reject) => {
+      try {
+        this.loadingOptions = true;
+        const lazyLoadingOptions = {
+          limit: this.limit,
+          page: this.page,
+          order_by: this.order_by,
+          order_direction: this.order_direction,
+          searchText: this.searchText,
+          parentIdValue: this.parentIdValue,
+          parentId: this.parentId,
+          selectedIds: this.selectedIds == null || this.selectedIds == undefined ? null : this.selectedIds,
+          selectedIdKey: this.selectedIdKey,
+          otherParentId: this.otherParentId,
+          otherParentIdValue: this.otherParentIdValue,
+          q: searchText
+        }
+        this.myService.post(this.apiPath, { ...lazyLoadingOptions })
+          .subscribe({
+            next: (list: any) => {
+              if (list?.status == 1) {
+                if (!list?.nextPage) this.isMorepage = false;
+                this.page += 1;
+                if (isMarge) {
+                  console.log("Marged....")
+                  // this.options = [...this.options, ...list?.data];
+                  for (let index = 0; index < list.data.length; index++) {
+                    const element = list.data[index];
+                    this.filteredOptions.push(element)
+                  }
+                }
+                else { this.options = list?.data; this.filteredOptions = this.options; }
+                this.loadingOptions = false;
+                if (!this.filteredOptions.length && searchText) {
+                  this.addNotFoundToList(searchText)
+                }
+                resolve(list)
+              }
+            },
+            error: (e: any) => {
+              this.loadingOptions = false;
+              reject(e)
+            },
+          });
+      } catch (e) {
+        reject(e)
+      }
+    })
   }
 }
 

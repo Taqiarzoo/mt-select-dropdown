@@ -3,8 +3,10 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
-    "build": "ng build",
+    "start": "ng serve --project MtSelectDropdown-app --configuration production",
+    "build": "npm run version && ng build --project MtSelectDropdown --configuration production",
+    "version": "cd projects/mt-select-dropdown && npm version --patch",
+    "publish": "cd dist/mt-select-dropdown && npm publish",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
   },

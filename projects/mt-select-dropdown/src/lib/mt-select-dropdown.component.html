@@ -51,12 +51,14 @@
     </div>
 
     <!-- The actual dropdown menu -->
-    <ul #dropdownMenu class="dropdown-menu pb-3" [class.show]="dropdownOpen" [class.position-absolute]="!attachToBody"
-        [class.position-fixed]="attachToBody" (scroll)="onScroll($event)" [ngClass]="sCO.dropdownMenu">
+    <ul #dropdownMenu id="dropdown-menu" class="dropdown-menu pb-3" [class.show]="dropdownOpen"
+        [class.position-absolute]="!attachToBody" (scroll)="onScroll($event)" [ngClass]="sCO.dropdownMenu">
         <!-- Search input as the first element in the dropdown -->
 
-        <li *ngIf="dropdownOpen" class="dropdown-item search-input-item sticky-top header" style="top:0">
-            <div class="input-group mb-3 ">
+        <li *ngIf="dropdownOpen"
+            class="dropdown-item search-input-item sticky-top header d-flex align-items-center justify-content-center"
+            style="top:0">
+            <div class="input-group my-2">
                 <div class="input-group-text input-group-sm" *ngIf="isMultiSelect">
                     <input tabindex="-1" type="checkbox" [checked]="isAllSelected()"
                         (change)="toggleSelectAll($event)" />
@@ -73,9 +75,10 @@
         (keyup.enter)="handleEnterKey()" (keyup.esc)="closeDropdown()" placeholder="Search..." /> -->
         </li>
 
-        <li *ngFor="let option of filteredOptions; let opIndex = index" class="dropdown-item items"
-            [class.active]="isOptionSelected(option)" [ngClass]="opIndex == highlightedIndex ? 'heighlited-item' : ''"
-            (click)="selectOption(option, true)" [ngClass]="sCO.dropdownItem">
+        @for (option of filteredOptions; track option.id; let opIndex = $index) {
+        <li class="dropdown-item items" [class.active]="isOptionSelected(option)"
+            [ngClass]="opIndex == highlightedIndex ? 'heighlited-item' : ''" (click)="selectOption(option, true)"
+            [ngClass]="sCO.dropdownItem">
             <span *ngIf="!listTemplet && option?.id!='nf'">{{ option | labelKey: labelKey }}
                 <span *ngIf="isMultiSelect && isOptionSelected(option)" class="unselect-item"
                     (click)="unselectOption(option,$event)">&times;</span>
@@ -90,9 +93,19 @@
                 </ng-container>
             </ng-template>
         </li>
-        @if(addNotFound==false&&!filteredOptions?.length){
+        }
+
+        @if(addNotFound==false&&!filteredOptions?.length && !loadingOptions){
         <li class="dropdown-item items" [ngClass]="sCO.dropdownItem">
             Item Not Found
+        </li>
+        }
+        @if(loadingOptions)
+        {
+        <li class="dropdown-item items search-input-item d-flex align-items-center justify-content-start"
+            [ngClass]="sCO.dropdownItem">
+            <span class="spinner-border spinner-border-sm " role="status" aria-hidden="true"></span>
+            <span class="visually-hidden">Loading...</span><span class="ps-2">Loading...</span>
         </li>
         }
     </ul>

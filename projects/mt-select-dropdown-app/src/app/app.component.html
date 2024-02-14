@@ -7,10 +7,10 @@
     </div>
     <div class="col-md-12 ">
       <div class="input-group input-group-sm mb-3 d-flex align-items-center justify-content-center">
-        <mt-select-dropdown [options]="selectedOption" class="w-100"></mt-select-dropdown>
+        <mt-select-dropdown [apiPath]="'http://localhost:3000/api/masters/sc/city_dropdown'" [order_by]="'id'"
+          [lazyLoading]="true" class="w-100"></mt-select-dropdown>
         <span class="input-group-text" id="inputGroup-sizing-sm">+</span>
       </div>
-
     </div>
   </div>
 </div>
