@@ -6,12 +6,20 @@
 
 ## mt-select-dropdown Key Features:
 
-* **Multi-select and Single-select:** Choose between standard dropdown behavior or picking multiple values.
-* **Custom Templates:** Utilize custom templates to tailor the appearance of selected options and dropdown items.
-* **Lazy Loading:** Improve performance by loading options on demand, especially for large datasets.
-* **Search:** Efficiently find options by filtering with a built-in search function.
-* **Flexibility:** Fine-tune styling and behaviors with a range of input properties and events.
-* **Accessibility:** Ensure inclusive use with appropriate ARIA attributes and keyboard navigation support.
+1. **Customization Options:** The library provides extensive customization options for styling various elements of the dropdown, including the container, input field, selected items, dropdown menu, and more. Developers can apply custom CSS classes to achieve the desired visual appearance.
+
+2. **Multi-Select Support:** The `MtSelectDropdown` component supports multi-select functionality, allowing users to select multiple items from a dropdown list. Selected items are visually highlighted and can be easily managed.
+
+3. **Lazy Loading:** With support for lazy loading, the library enables efficient handling of large datasets by loading items dynamically as the user scrolls through the dropdown list. This enhances performance and reduces initial loading times, especially for datasets with a large number of items.
+
+4. **Search Functionality:** Users can quickly search and filter dropdown options using the built-in search functionality. As users type in the search input field, the dropdown list dynamically updates to display matching results, providing a seamless user experience.
+
+5. **Inbuilt API Calling:** The library simplifies data fetching from external APIs by providing inbuilt API calling functionality. Developers can specify an API endpoint, and the library handles the HTTP requests and data processing, seamlessly integrating external data sources into the dropdown component.
+
+6. **Event Handling:** The library offers comprehensive event handling capabilities, allowing developers to define custom behavior for various events such as dropdown opening, closing, item selection, and more. This enables developers to create interactive dropdowns with rich user interactions.
+
+7. **Error Handling:** Robust error handling mechanisms are built into the library to gracefully handle errors that may occur during data fetching or interaction with external APIs. Error messages are displayed to users, providing informative feedback and enhancing the overall usability of the component.
+
 
 ## Installation
 
@@ -95,6 +103,8 @@ The Mt-Select-Dropdown component provides various configuration options to custo
 
 ![Demo](demo.gif)
 
+
+
 ## Basic Usage Example
 
 ```html
@@ -156,6 +166,7 @@ The Mt-Select-Dropdown component provides various configuration options to custo
 ```
 
 ## Usage Example of LazyLoding with Api
+
 ```html
 <div class="col-md-6 mb-4">
     <label class="form-label">State<span class="text-danger">*</span></label>
@@ -181,7 +192,7 @@ The Mt-Select-Dropdown component provides various configuration options to custo
     }
   }
 ```
-In Component we do this 
+In Component we do this This is internal service 
 
 ```tsx
 import { HttpErrorResponse } from '@angular/common/http';
@@ -203,7 +214,9 @@ export class MtSelectDropdownService {
 }
 ```
 
-We call the Api Like this 
+
+We call the Api Like this internally
+
 
 ```tsx
 myService = inject(MtSelectDropdownService);
@@ -260,13 +273,56 @@ callApi(isMarge: boolean = false, searchText: string = '') {
 
 ```
 
+### Api Request Object 
+Your Endpoint will Recive request body like this
+```json
+ {
+      "limit": 10,
+      "page": 1,
+      "order_by": "id",
+      "order_direction": "asc",
+      "searchText": "",
+      "parentIdValue": null,
+      "parentId": null,
+      "selectedIds": null,
+      "selectedIdKey": "id",
+      "otherParentId": null,
+      "otherParentIdValue": null,
+      "q": ""
+  }
+```
+### Api Response Object
+
+
+The Api Response Object should be like this 
+```json
+{
+    "status": 1,
+    "previousPage": null,
+    "currentPage": 1,
+    "nextPage": 2,
+    "total": 31,
+    "limit": 10,
+    "data": [
+        {
+            "id": 1,
+            "name": "Ladakh",
+            "code": "LD",
+            "countryId": null,
+            "createdAt": "2024-02-13T11:54:25.000Z",
+            "updatedAt": "2024-02-13T11:54:25.000Z"
+        },
+    ],
+  }
+```
+
 ### Events
 
 The Mt-Select-Dropdown library emits several events to communicate changes and interactions with the parent component:
 
 | Event Name | Type                    | Description                                                |
 |------------|-------------------------|------------------------------------------------------------|
-| onSelect   | EventEmitter<any \| any[]> | Emit the selected value(s) when an option is selected.   |
+| onSelect   | EventEmitter<any | any[]> | Emit the selected value(s) when an option is selected.   |
 | onOpen     | EventEmitter<void>         | Emit when the dropdown is opened.                        |
 | onClose    | EventEmitter<void>         | Emit when the dropdown is closed.                        |
 | onSearch   | EventEmitter<string>       | Emit the search query when the user performs a search.   |

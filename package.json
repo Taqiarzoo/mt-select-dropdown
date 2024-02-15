@@ -1,7 +1,12 @@
 {
   "name": "mt-select-dropdown-lib",
   "version": "0.0.2",
-  "description": "npm run build --vir=minor npm run build --vir=major npm run build --vir=patch",
+  "description": "The MtSelectDropdown multi select dropdown library is a versatile Angular component designed to facilitate the creation of custom dropdowns and select menus within Angular applications. It offers a wide range of features and customization options, allowing developers to tailor the appearance and functionality of dropdowns to suit their specific needs.",
+  "badges": [
+    {
+      "description": "npm run build --vir=minor npm run build --vir=major npm run build --vir=patch"
+    }
+  ],
   "scripts": {
     "ng": "ng",
     "start": "ng serve --project MtSelectDropdown-app --configuration production",
