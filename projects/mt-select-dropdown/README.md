@@ -372,4 +372,4 @@ The `StyleClassOptions` interface defines the available CSS classes that can be 
 
 ## License
 
-[MIT License](https://github.com/Taqiarzoo/mt-select-dropdown/LICENSE.txt) © Mohd Taqi
+[MIT License](https://github.com/Taqiarzoo/mt-select-dropdown/blob/main/LICENSE) © Mohd Taqi
