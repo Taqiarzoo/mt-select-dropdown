@@ -1,14 +1,14 @@
 <div class="p-3">
   <h1>Mt Select Dropdown Demo</h1>
   <div class="row">
-    <div class="col-md-12 input-group input-group-sm mb-3 d-flex align-items-center justify-content-center">
+    <div class="col-md-12 input-group input-group-sm mb-5 pb-5 d-flex align-items-center justify-content-center">
       <mt-select-dropdown [options]="selectedOption" class=""></mt-select-dropdown>
       <span class="input-group-text" id="inputGroup-sizing-sm">+</span>
     </div>
-    <div class="col-md-12 ">
-      <div class="input-group input-group-sm mb-3 d-flex align-items-center justify-content-center">
-        <mt-select-dropdown [apiPath]="'http://localhost:3000/api/masters/sc/city_dropdown'" [order_by]="'id'"
-          [lazyLoading]="true" class="w-100"></mt-select-dropdown>
+    <div class="col-md-12 mt-5 pt-5">
+      <div class="input-group input-group-sm mb-3 mt-5 pt-5 d-flex align-items-center justify-content-center">
+        <mt-select-dropdown [attachToBody]="true" [apiPath]="'http://localhost:3000/api/masters/sc/city_dropdown'"
+          [order_by]="'id'" [lazyLoading]="true" class="w-100"></mt-select-dropdown>
         <span class="input-group-text" id="inputGroup-sizing-sm">+</span>
       </div>
     </div>

@@ -1,11 +1,12 @@
 {
   "name": "mt-select-dropdown-lib",
   "version": "0.0.2",
+  "description": "npm run build --vir=minor npm run build --vir=major npm run build --vir=patch",
   "scripts": {
     "ng": "ng",
     "start": "ng serve --project MtSelectDropdown-app --configuration production",
     "build": "npm run version && ng build --project MtSelectDropdown --configuration production",
-    "version": "cd projects/mt-select-dropdown && npm version",
+    "version": "node ./scripts/version.js",
     "publish": "cd dist/mt-select-dropdown && npm publish",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"

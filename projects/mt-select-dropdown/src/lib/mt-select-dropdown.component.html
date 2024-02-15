@@ -78,7 +78,7 @@
         @for (option of filteredOptions; track option.id; let opIndex = $index) {
         <li class="dropdown-item items" [class.active]="isOptionSelected(option)"
             [ngClass]="opIndex == highlightedIndex ? 'heighlited-item' : ''" (click)="selectOption(option, true)"
-            [ngClass]="sCO.dropdownItem">
+            [ngClass]="sCO.dropdownItem" [id]="'item-'+opIndex">
             <span *ngIf="!listTemplet && option?.id!='nf'">{{ option | labelKey: labelKey }}
                 <span *ngIf="isMultiSelect && isOptionSelected(option)" class="unselect-item"
                     (click)="unselectOption(option,$event)">&times;</span>

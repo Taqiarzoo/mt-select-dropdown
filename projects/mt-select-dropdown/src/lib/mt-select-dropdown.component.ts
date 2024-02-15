@@ -145,7 +145,6 @@ export class MtSelectDropdownComponent implements OnInit, OnDestroy, ControlValu
   onScroll(event: any): void {
     // const dropdownMenu = this.dropdownMenu.nativeElement;
     const dropdownMenu = this.elRef.nativeElement.querySelector('#dropdown-menu'); // adjust selector as needed
-    console.log('this.isMorepage', this.isMorepage)
     if (this.lazyLoading && !this.loadingOptions && this.isMorepage) {
       // Store the current scroll position
       const scrollTopBeforeLoad = dropdownMenu.scrollTop;
@@ -187,7 +186,7 @@ export class MtSelectDropdownComponent implements OnInit, OnDestroy, ControlValu
       this.loadingOptions = true
       this.isMorepage = true
     }
-    setTimeout(() => {
+    setTimeout(async () => {
       this.highlightedIndex = -1;
       if (this.dropdownOpen && this.searchInput) {
         this.searchInput.nativeElement.focus();
@@ -196,7 +195,10 @@ export class MtSelectDropdownComponent implements OnInit, OnDestroy, ControlValu
         if (this.lazyLoading) {
           if (this.apiPath) {
             this.page = 1
-            this.callApi()
+            await this.callApi();
+            setTimeout(() => {
+              this.adjustDropdownPosition()
+            }, 100)
           } else {
             this.loadNext.emit();
           }
@@ -273,9 +275,17 @@ export class MtSelectDropdownComponent implements OnInit, OnDestroy, ControlValu
     const newIndex = this.highlightedIndex + step;
     if (newIndex >= 0 && newIndex < this.filteredOptions.length) {
       this.highlightedIndex = newIndex;
-
+      this.scrollToElement('#item-' + this.highlightedIndex)
     }
   }
+
+  scrollToElement(id: string) {
+    const element = this.elementRef.nativeElement.querySelector(id);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }
+
 
   // Handle Enter key press and select the highlighted option
   handleEnterKey(): void {
@@ -439,7 +449,6 @@ export class MtSelectDropdownComponent implements OnInit, OnDestroy, ControlValu
 
       const spaceBelow = window.innerHeight - customInputRect.bottom;
       const spaceAbove = customInputRect.top;
-
       if (spaceBelow < dropdownMenuHeight && spaceAbove >= dropdownMenuHeight) {
         // Not enough space below, but enough space above, position the dropdown above the custom input
         this.renderer.setStyle(dropdownMenu, 'top', `-${dropdownMenuHeight}px`);
@@ -498,7 +507,6 @@ export class MtSelectDropdownComponent implements OnInit, OnDestroy, ControlValu
                 if (!list?.nextPage) this.isMorepage = false;
                 this.page += 1;
                 if (isMarge) {
-                  console.log("Marged....")
                   // this.options = [...this.options, ...list?.data];
                   for (let index = 0; index < list.data.length; index++) {
                     const element = list.data[index];
