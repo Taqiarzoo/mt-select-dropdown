@@ -404,12 +404,10 @@ export class MtSelectDropdownComponent implements OnInit, OnDestroy, ControlValu
 
   // Emit the selected value(s) to the parent component
   private emitSelectedValue(): void {
-    this.onSelect.emit(this.isMultiSelect ? this.selectedOption : this.selectedOption);
     if (this.onChange) {
       this.onChange(this.selectedOption);
-
     }
-
+    this.onSelect.emit(this.isMultiSelect ? this.selectedOption : this.selectedOption);
   }
 
   registedDomEvent() {
