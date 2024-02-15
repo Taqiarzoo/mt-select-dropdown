@@ -368,8 +368,8 @@ The `StyleClassOptions` interface defines the available CSS classes that can be 
 ```
 ## Authors
 
-* **Mohd Taqi Arzoo** - *Initial work* - [Mohd Taqi](https://taqiarzoo.weebly.com/)
+* **Mohd Taqi** - *All Work Done By* - [Mohd Taqi](https://taqiarzoo.weebly.com/)
 
 ## License
 
-[MIT License](https://andreasonny.mit-license.org/2019) © Mohd Taqi Arzoo
+[MIT License](https://github.com/Taqiarzoo/mt-select-dropdown/LICENSE.txt) © Mohd Taqi
