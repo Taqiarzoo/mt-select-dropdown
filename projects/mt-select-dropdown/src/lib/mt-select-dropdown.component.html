@@ -19,10 +19,15 @@
 
 
         <ng-container *ngIf="isMultiSelect && selectedItemTemplet && selectedOption?.length > 0">
-            <ng-container *ngFor="let option of selectedOption; let i = index">
-                <ng-container [ngTemplateOutlet]="selectedItemTemplet"
-                    [ngTemplateOutletContext]="{ option: option, unSelect: unselectOption }"></ng-container>
-            </ng-container>
+            <div class="selected-options">
+                <ng-container *ngFor="let option of selectedOption; let i = index">
+                    <ng-container [ngTemplateOutlet]="selectedItemTemplet"
+                        [ngTemplateOutletContext]="{ option: option, unSelect: unselectOption }"></ng-container>
+                </ng-container>
+                <span *ngIf="batchLimit && selectedOption.length > (batchLimit)">
+                    +{{ selectedOption.length - (batchLimit) }}
+                </span>
+            </div>
         </ng-container>
 
         <!-- Display the selected option in single-select mode -->
@@ -37,8 +42,10 @@
 
         <ng-template *ngIf="!isMultiSelect && selectedItemTemplet && selectedOption">
             <!-- Single-select option custom template -->
-            <ng-container [ngTemplateOutlet]="selectedItemTemplet"
-                [ngTemplateOutletContext]="{ option: selectedOption, unSelect: unselectOption }"></ng-container>
+            <div class="selected-options">
+                <ng-container [ngTemplateOutlet]="selectedItemTemplet"
+                    [ngTemplateOutletContext]="{ option: selectedOption, unSelect: unselectOption }"></ng-container>
+            </div>
         </ng-template>
 
         <span class="placeholder1"
