@@ -429,7 +429,7 @@ export class MtSelectDropdownComponent implements OnInit, OnDestroy, ControlValu
   }
 
   setDropdownWidth(): void {
-    if (this.dropdownOpen && this.dropdown && this.isMultiSelect) {
+    if (this.dropdownOpen && this.dropdown) {
       const customInputWidth = this.dropdown.nativeElement.offsetWidth;
       const dropdownMenu = this.dropdownMenu.nativeElement;
       this.renderer.setStyle(dropdownMenu, 'width', customInputWidth + 'px');

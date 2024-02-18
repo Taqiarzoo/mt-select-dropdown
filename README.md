@@ -8,17 +8,19 @@
 
 1. **Customization Options:** The library provides extensive customization options for styling various elements of the dropdown, including the container, input field, selected items, dropdown menu, and more. Developers can apply custom CSS classes to achieve the desired visual appearance.
 
-2. **Multi-Select Support:** The `MtSelectDropdown` component supports multi-select functionality, allowing users to select multiple items from a dropdown list. Selected items are visually highlighted and can be easily managed.
+2. **Full Keyboard Navigation:** Dropdowm support full keyboard Navigation.
 
-3. **Lazy Loading:** With support for lazy loading, the library enables efficient handling of large datasets by loading items dynamically as the user scrolls through the dropdown list. This enhances performance and reduces initial loading times, especially for datasets with a large number of items.
+3. **Multi-Select Support:** The `MtSelectDropdown` component supports multi-select functionality, allowing users to select multiple items from a dropdown list. Selected items are visually highlighted and can be easily managed.
 
-4. **Search Functionality:** Users can quickly search and filter dropdown options using the built-in search functionality. As users type in the search input field, the dropdown list dynamically updates to display matching results, providing a seamless user experience.
+4. **Lazy Loading:** With support for lazy loading, the library enables efficient handling of large datasets by loading items dynamically as the user scrolls through the dropdown list. This enhances performance and reduces initial loading times, especially for datasets with a large number of items.
 
-5. **Inbuilt API Calling:** The library simplifies data fetching from external APIs by providing inbuilt API calling functionality. Developers can specify an API endpoint, and the library handles the HTTP requests and data processing, seamlessly integrating external data sources into the dropdown component.
+5. **Search Functionality:** Users can quickly search and filter dropdown options using the built-in search functionality. As users type in the search input field, the dropdown list dynamically updates to display matching results, providing a seamless user experience.
 
-6. **Event Handling:** The library offers comprehensive event handling capabilities, allowing developers to define custom behavior for various events such as dropdown opening, closing, item selection, and more. This enables developers to create interactive dropdowns with rich user interactions.
+6. **Inbuilt API Calling:** The library simplifies data fetching from external APIs by providing inbuilt API calling functionality. Developers can specify an API endpoint, and the library handles the HTTP requests and data processing, seamlessly integrating external data sources into the dropdown component.
 
-7. **Error Handling:** Robust error handling mechanisms are built into the library to gracefully handle errors that may occur during data fetching or interaction with external APIs. Error messages are displayed to users, providing informative feedback and enhancing the overall usability of the component.
+7. **Event Handling:** The library offers comprehensive event handling capabilities, allowing developers to define custom behavior for various events such as dropdown opening, closing, item selection, and more. This enables developers to create interactive dropdowns with rich user interactions.
+
+8. **Error Handling:** Robust error handling mechanisms are built into the library to gracefully handle errors that may occur during data fetching or interaction with external APIs. Error messages are displayed to users, providing informative feedback and enhancing the overall usability of the component.
 
 
 ## Installation
@@ -77,7 +79,7 @@ The Mt-Select-Dropdown component provides various configuration options to custo
 | labelKey             | string  | 'name'              | The key to use for displaying the label of each option.                                        |
 | batchLimit           | number  | -                   | The maximum number of selected options to display in multi-select mode bwfore.                        |
 | selectedItemTemplet  | TemplateRef<any> | -  | Custom template for rendering selected items.                             |
-| listTemplet          | TemplateRef<any> | -  | Custom template for rendering items in the dropdown list.                                       |
+| listItemTemplet          | TemplateRef<any> | -  | Custom template for rendering items in the dropdown list.                                       |
 | willAutoClose        | boolean | true                | Flag indicating whether the dropdown should automatically close when clicking outside.         |
 | isMultiSelect        | boolean | false               | Flag to enable multi-select mode.                                                             |
 | placeholder          | string  | 'Please Select'    | Placeholder text to display when no option is selected.                                         |
@@ -124,7 +126,7 @@ The Mt-Select-Dropdown component provides various configuration options to custo
           <label class="form-label"> Partcipant<span class="text-danger">*</span></label>
           <div class="input-group mb-3">
               <div type="text" class="form-control form-control-sm">
-                  <mt-select-dropdown [attachToBody]="true" [listTemplet]="partcipantListItem" [selectedItemTemplet]="partcipantSelectedItem" formControlName="partcipant" [isMultiSelect]="true"
+                  <mt-select-dropdown [attachToBody]="true" [listItemTemplet]="partcipantListItem" [selectedItemTemplet]="partcipantSelectedItem" formControlName="partcipant" [isMultiSelect]="true"
                       [batchLimit]="2" [options]="options" class=""></mt-select-dropdown>
               </div>
               <span class="input-group-text"><i class="fa fa-plus"></i></span>
