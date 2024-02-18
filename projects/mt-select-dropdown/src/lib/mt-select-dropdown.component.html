@@ -20,9 +20,10 @@
 
         <ng-container *ngIf="isMultiSelect && selectedItemTemplet && selectedOption?.length > 0">
             <div class="selected-options">
-                <ng-container *ngFor="let option of selectedOption; let i = index">
+                <ng-container
+                    *ngFor="let option of selectedOption.slice(0, batchLimit || selectedOption.length); let i = index">
                     <ng-container [ngTemplateOutlet]="selectedItemTemplet"
-                        [ngTemplateOutletContext]="{ option: option, unSelect: unselectOption }"></ng-container>
+                        [ngTemplateOutletContext]="{ option: option, unSelect: unselectOption.bind(this)}"></ng-container>
                 </ng-container>
                 <span *ngIf="batchLimit && selectedOption.length > (batchLimit)">
                     +{{ selectedOption.length - (batchLimit) }}
@@ -44,14 +45,13 @@
             <!-- Single-select option custom template -->
             <div class="selected-options">
                 <ng-container [ngTemplateOutlet]="selectedItemTemplet"
-                    [ngTemplateOutletContext]="{ option: selectedOption, unSelect: unselectOption }"></ng-container>
+                    [ngTemplateOutletContext]="{ option: selectedOption, unSelect: unselectOption.bind(this)}"></ng-container>
             </div>
         </ng-template>
 
         <span class="placeholder1"
             *ngIf="(!selectedOption && !isMultiSelect) || (!selectedOption?.length && isMultiSelect)"
             [ngClass]="sCO.placeholder">{{ placeholder || 'Please select' }}</span>
-
         <span class="drop-sign" [ngClass]="sCO.dropSymbol">
             <span class="drop-symbol"></span>
         </span>
@@ -86,7 +86,7 @@
         <li class="dropdown-item items" [class.active]="isOptionSelected(option)"
             [ngClass]="opIndex == highlightedIndex ? 'heighlited-item' : ''" (click)="selectOption(option, true)"
             [ngClass]="sCO.dropdownItem" [id]="'item-'+opIndex">
-            <span *ngIf="!listTemplet && option?.id!='nf'">{{ option | labelKey: labelKey }}
+            <span *ngIf="!listItemTemplet && option?.id!='nf'">{{ option | labelKey: labelKey }}
                 <span *ngIf="isMultiSelect && isOptionSelected(option)" class="unselect-item"
                     (click)="unselectOption(option,$event)">&times;</span>
             </span>
@@ -94,11 +94,14 @@
             <div class="not_found_item">{{ option | labelKey: labelKey }} <div class="lable-nf">Not Found</div>
             </div>
             }
-            <ng-template *ngIf="listTemplet && option?.id!='nf'">
-                <!-- Single-select option custom template -->
-                <ng-container [ngTemplateOutlet]="listTemplet" [ngTemplateOutletContext]="{ option: option }">
-                </ng-container>
-            </ng-template>
+            @if(listItemTemplet && option?.id!='nf'){
+            <ng-container>
+                <div>
+                    <ng-container [ngTemplateOutlet]="listItemTemplet"
+                        [ngTemplateOutletContext]="{ option: option, unSelect: unselectOption.bind(this)}"></ng-container>
+                </div>
+            </ng-container>
+            }
         </li>
         }
 

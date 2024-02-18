@@ -8,9 +8,17 @@
     <div class="col-md-12 mt-5 pt-5">
       <div class="input-group input-group-sm mb-3 mt-5 pt-5 d-flex align-items-center justify-content-center">
         <mt-select-dropdown [attachToBody]="true" [apiPath]="'http://localhost:3000/api/masters/sc/city_dropdown'"
-          [order_by]="'id'" [lazyLoading]="true" class="w-100"></mt-select-dropdown>
+          [order_by]="'id'" [labelKey]="'name'" [listItemTemplet]="vanueSelectedItem" [lazyLoading]="true"
+          class="w-100"></mt-select-dropdown>
         <span class="input-group-text" id="inputGroup-sizing-sm">+</span>
       </div>
+
+      <ng-template #vanueSelectedItem let-option="option">
+        <span class="selected-option">
+          {{option?.name}}
+          {{option?.code}}
+        </span>
+      </ng-template>
     </div>
   </div>
 </div>

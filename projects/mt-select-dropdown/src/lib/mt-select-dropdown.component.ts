@@ -43,7 +43,7 @@ export class MtSelectDropdownComponent implements OnInit, OnDestroy, ControlValu
   @Input() labelKey: string = 'name';
   @Input() batchLimit!: number;
   @Input() selectedItemTemplet!: TemplateRef<any>;
-  @Input() listTemplet!: TemplateRef<any>;
+  @Input() listItemTemplet!: TemplateRef<any>;
   @Input() willAutoClose: boolean = true;
   @Input() isMultiSelect: boolean = false; // New input to specify multi-select
   @Input() placeholder: string = "Please Select"; // Flag to show the loading animation
