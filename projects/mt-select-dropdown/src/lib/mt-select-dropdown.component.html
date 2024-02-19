@@ -41,13 +41,13 @@
             </span>
         </div>
 
-        <ng-template *ngIf="!isMultiSelect && selectedItemTemplet && selectedOption">
+        <ng-container *ngIf="!isMultiSelect && selectedItemTemplet && selectedOption">
             <!-- Single-select option custom template -->
             <div class="selected-options">
                 <ng-container [ngTemplateOutlet]="selectedItemTemplet"
                     [ngTemplateOutletContext]="{ option: selectedOption, unSelect: unselectOption.bind(this)}"></ng-container>
             </div>
-        </ng-template>
+        </ng-container>
 
         <span class="placeholder1"
             *ngIf="(!selectedOption && !isMultiSelect) || (!selectedOption?.length && isMultiSelect)"
